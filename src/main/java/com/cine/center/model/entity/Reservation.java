@@ -25,6 +25,7 @@ public class Reservation {
     private LocalDateTime dateTime;
 
     @NotNull(message = "Theater is mandatory")
+    @Max(value = 100, message = "Customer name cannot exceed 100 characters")
     @Column(nullable = false)
     private String customerName;
 
