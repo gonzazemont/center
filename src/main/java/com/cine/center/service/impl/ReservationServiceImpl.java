@@ -42,11 +42,7 @@ public class ReservationServiceImpl implements ReservationService {
         Theater theater = theaterRepository.findById(dto.getTheaterId())
                 .orElseThrow(()-> new ResourceNotFoundException("Theater with id " + dto.getTheaterId() + " not found"));
 
-        if(theater.getCapacity() < dto.getNumberOfSeats()){
-            throw new BusinessException("Number of seats requested exceeds theater capacity");
-        }
-
-
+        
         int reservedSeats = reservationRepository.sumReservedSeatsByTheaterAndDateTime(dto.getTheaterId(), dto.getDateTime());
         if(reservedSeats + dto.getNumberOfSeats() > theater.getCapacity()){
             throw new BusinessException("Not enough available seats for the selected theater at the requested time");
@@ -69,7 +65,7 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     @Transactional(readOnly = true)
     public List<ReservationResponseDTO> getAll() {
-        return reservationRepository.findAll()
+        return reservationRepository.findAllWithRelations()
                 .stream()
                 .map(reservationMapper::toDTO)
                 .toList();
@@ -78,14 +74,14 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     @Transactional(readOnly = true)
     public ReservationResponseDTO getById(Long id) {
-        Reservation reservation = reservationRepository.findById(id)
+        Reservation reservation = reservationRepository.findByIdWithRelations(id)
                 .orElseThrow(()-> new ResourceNotFoundException("Reservation with id " + id + " not found"));
         return reservationMapper.toDTO(reservation);
     }
 
     @Override
     public ReservationResponseDTO update(Long id, ReservationRequestDTO dto) {
-        Reservation reservation = reservationRepository.findById(id)
+        Reservation reservation = reservationRepository.findByIdWithRelations(id)
                 .orElseThrow(()-> new ResourceNotFoundException("Reservation with id " + id + " not found"));
 
 
@@ -103,7 +99,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public ReservationResponseDTO updateStatus(Long id, ReservationUpdateStatusDTO dto) {
-        Reservation reservation = reservationRepository.findById(id)
+        Reservation reservation = reservationRepository.findByIdWithRelations(id)
                 .orElseThrow(()-> new ResourceNotFoundException("Reservation with id " + id + " not found"));
 
         reservation.setStatus(dto.getStatus());
@@ -113,7 +109,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public List<ReservationResponseDTO> getReservationsByDate(LocalDate date) {
-        return reservationRepository.findByDate(date)
+        return reservationRepository.findByDateWithRelations(date)
                 .stream()
                 .map(reservationMapper::toDTO)
                 .toList();

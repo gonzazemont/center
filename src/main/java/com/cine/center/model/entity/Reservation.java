@@ -22,7 +22,7 @@ public class Reservation {
     @Column(nullable = false)
     private LocalDateTime dateTime;
 
-    @NotBlank(message = "Theater is mandatory")
+    @NotBlank(message = "Customer name is mandatory")
     @Size(max = 100, message = "Customer name cannot exceed 100 characters")
     @Column(nullable = false)
     private String customerName;

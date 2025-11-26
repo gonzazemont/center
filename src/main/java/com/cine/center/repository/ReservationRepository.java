@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
@@ -46,5 +47,23 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     //for finding reservations on a specific date
     @Query("SELECT r FROM Reservation r WHERE DATE(r.dateTime) = :date")
     List<Reservation> findByDate(@Param("date") LocalDate date);
+
+
+    @Query("SELECT r FROM Reservation r " +
+            "JOIN FETCH r.theater " +
+            "JOIN FETCH r.movie")
+    List<Reservation> findAllWithRelations();
+
+    @Query("SELECT r FROM Reservation r " +
+            "JOIN FETCH r.theater " +
+            "JOIN FETCH r.movie " +
+            "WHERE r.id = :id")
+    Optional<Reservation> findByIdWithRelations(@Param("id") Long id);
+
+    @Query("SELECT r FROM Reservation r " +
+            "JOIN FETCH r.theater " +
+            "JOIN FETCH r.movie " +
+            "WHERE DATE(r.dateTime) = :date")
+    List<Reservation> findByDateWithRelations(@Param("date") LocalDate date);
 
 }
