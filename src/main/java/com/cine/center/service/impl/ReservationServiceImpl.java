@@ -42,7 +42,7 @@ public class ReservationServiceImpl implements ReservationService {
         Theater theater = theaterRepository.findById(dto.getTheaterId())
                 .orElseThrow(()-> new ResourceNotFoundException("Theater with id " + dto.getTheaterId() + " not found"));
 
-        
+
         int reservedSeats = reservationRepository.sumReservedSeatsByTheaterAndDateTime(dto.getTheaterId(), dto.getDateTime());
         if(reservedSeats + dto.getNumberOfSeats() > theater.getCapacity()){
             throw new BusinessException("Not enough available seats for the selected theater at the requested time");
@@ -92,8 +92,9 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public void delete(Long id) {
-        Reservation reservation = reservationRepository.findById(id)
-                .orElseThrow(()-> new ResourceNotFoundException("Reservation with id " + id + " not found"));
+        if (!reservationRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Reservation with id " + id + " not found");
+        }
         reservationRepository.deleteById(id);
     }
 
@@ -102,7 +103,18 @@ public class ReservationServiceImpl implements ReservationService {
         Reservation reservation = reservationRepository.findByIdWithRelations(id)
                 .orElseThrow(()-> new ResourceNotFoundException("Reservation with id " + id + " not found"));
 
-        reservation.setStatus(dto.getStatus());
+        ReserveStatus currentStatus = reservation.getStatus();
+        ReserveStatus newStatus = dto.getStatus();
+
+        if (currentStatus == ReserveStatus.CANCELLED) {
+            throw new BusinessException("Cannot change status of a cancelled reservation");
+        }
+
+        if (currentStatus == ReserveStatus.CONFIRMED && newStatus == ReserveStatus.PENDING) {
+            throw new BusinessException("Cannot revert from CONFIRMED to PENDING");
+        }
+
+        reservation.setStatus(newStatus);
         Reservation updatedReservation = reservationRepository.save(reservation);
         return reservationMapper.toDTO(updatedReservation);
     }
