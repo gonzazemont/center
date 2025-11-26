@@ -2,9 +2,7 @@ package com.cine.center.model.entity;
 
 import com.cine.center.model.enums.ReserveStatus;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,8 +22,8 @@ public class Reservation {
     @Column(nullable = false)
     private LocalDateTime dateTime;
 
-    @NotNull(message = "Theater is mandatory")
-    @Max(value = 100, message = "Customer name cannot exceed 100 characters")
+    @NotBlank(message = "Theater is mandatory")
+    @Size(max = 100, message = "Customer name cannot exceed 100 characters")
     @Column(nullable = false)
     private String customerName;
 

@@ -17,7 +17,7 @@ public class ReservationRequestDTO {
     @Future(message = "Reservation date and time must be in the future")
     private LocalDateTime dateTime;
 
-    @NotNull(message = "Customer name is mandatory")
+    @NotBlank(message = "Customer name is mandatory")
     @Size(max = 100, message = "Customer name cannot exceed 100 characters")
     private String customerName;
 

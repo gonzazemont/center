@@ -34,6 +34,9 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             @Param("dateTime") LocalDateTime dateTime
     );
 
+    //check if a reservation exists by customer name
+    boolean existsByCustomerName(String customerName);
+
     //find reservations within a date range
     List<Reservation> findByDateTimeBetween(LocalDateTime start, LocalDateTime end);
 
