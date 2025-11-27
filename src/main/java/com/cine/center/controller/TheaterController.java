@@ -3,6 +3,7 @@ package com.cine.center.controller;
 import com.cine.center.dto.theater.TheaterRequestDTO;
 import com.cine.center.dto.theater.TheaterResponseDTO;
 import com.cine.center.service.TheaterService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class TheaterController {
 
     //create theater
     @PostMapping
-    public ResponseEntity<TheaterResponseDTO> create(TheaterRequestDTO dto){
+    public ResponseEntity<TheaterResponseDTO> create(@Valid @RequestBody TheaterRequestDTO dto){
         TheaterResponseDTO createdTheater = service.create(dto);
         return ResponseEntity.ok(createdTheater);
     }
